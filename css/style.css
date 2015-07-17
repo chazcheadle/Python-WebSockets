@@ -1,0 +1,56 @@
+body {
+    font-family: arial, sans-serif;
+}
+
+#control-container,
+#message-container,
+#code-container {
+    clear: both;
+    padding: 10px;
+}
+
+#message-container textarea {
+    font-family: arial, sans-serif;
+}
+
+#controls {
+    list-style-type: none;
+    margin: 25px 0 0 0;
+    padding: 0;
+}
+
+#controls li {
+    float: left;
+    margin: 0 5px 0 0;
+    height: 40px;
+    position: relative;
+}
+
+#contols label, #controls input {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#controls input[type="radio"] {
+    opacity: 0;
+    z-index: 100;
+}
+
+#controls input[type="radio"]:checked + label {
+    background: #0f0;
+}
+
+#controls label {
+    border: 1px solid #ccc;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 90;
+}
+
+#controls label:hover {
+    background: #ff0;
+}
