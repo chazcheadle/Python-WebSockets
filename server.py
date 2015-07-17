@@ -17,6 +17,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         print("WebSocket opened")
         self.write_message(self.create_packet('status', "WebSocket opened"))
+        # Register listening clients.
         self.clients.append(self)
 
     def on_message(self, message):
@@ -35,25 +36,30 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.broadcast_message(packet['MESSAGE'])
                 # Update status
                 self.write_message(self.create_packet('status', 'Message broadcasted'))
-            else:
-                # Echo message back to original client
+            elif self.mode == 'Echo':
+                # Echo message back to original client.
                 self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
                 # Update status
-                self.write_message(self.create_packet('status', 'Message Received'))
+                self.write_message(self.create_packet('status', 'Message echoed'))
+            elif:
+                # Send a beacon/heartbeat timestamp at a given interval.
+                self.write_message(self.create_packet('message', "### BEACON ###"))
+                # Update status
+                self.write_message(self.create_packet('status', 'Sending beacons...'))
 
+        # Print status to console.
         print(u"Received from client: \"" + message + "\"")
 
     def on_close(self):
         print("WebSocket closed")
         self.clients.remove(self)
 
-    def parse_packet():
-        packet
-
+    # Create JSON object
     def create_packet(self, type, message):
         packet = {'TYPE' : type, 'MESSAGE' : message}
         return json.dumps(packet)
 
+    # Broadcast message from single client to all registered listeners.
     def broadcast_message(self, message):
         for c in self.clients:
             c.write_message(self.create_packet('message', ">> " + message))
