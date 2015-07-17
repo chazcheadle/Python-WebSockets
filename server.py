@@ -8,10 +8,11 @@ from tornado.options import define, options, parse_command_line
 
 define("port", default=8080, help="run on the given port", type=int)
 
-mode = ['Echo', 'Broadcast', 'Beacon']
+modes = ['Echo', 'Broadcast', 'Beacon']
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []
+    mode = ''
 
     def open(self):
         print("WebSocket opened")
@@ -24,16 +25,21 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         except:
             return self.write_message(self.create_packet('status', "Error parsing incoming packet."))
         if packet['TYPE'] == 'mode':
-            self.write_message(self.create_packet('message', "* " + mode[int(packet['MESSAGE'])] + " mode activated."))
-            self.write_message(self.create_packet('status', 'Activate ' + mode[int(packet['MESSAGE'])] + ' mode' ))
-            print(u"Change to %s mode" % mode[int(packet['MESSAGE'])])
+            self.mode = modes[int(packet['MESSAGE'])]
+            self.write_message(self.create_packet('message', "* " + modes[int(packet['MESSAGE'])] + " mode activated."))
+            self.write_message(self.create_packet('status', 'Activate ' + modes[int(packet['MESSAGE'])] + ' mode' ))
+            print(u"Change to %s mode" % modes[int(packet['MESSAGE'])])
         if packet['TYPE'] == 'message':
-            # Broadcast message to all clients.
-
-            # Echo message back to original client
-            self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
-            # Update status
-            self.write_message(self.create_packet('status', 'Message Received'))
+            if self.mode == 'Broadcast':
+                # Broadcast message to all clients.
+                self.broadcast_message(packet['MESSAGE'])
+                # Update status
+                self.write_message(self.create_packet('status', 'Message broadcasted'))
+            else:
+                # Echo message back to original client
+                self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
+                # Update status
+                self.write_message(self.create_packet('status', 'Message Received'))
 
         print(u"Received from client: \"" + message + "\"")
 
@@ -47,6 +53,10 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def create_packet(self, type, message):
         packet = {'TYPE' : type, 'MESSAGE' : message}
         return json.dumps(packet)
+
+    def broadcast_message(self, message):
+        for c in self.clients:
+            c.write_message(self.create_packet('message', ">> " + message))
 
 class IndexPageHandler(tornado.web.RequestHandler):
     def get(self):
