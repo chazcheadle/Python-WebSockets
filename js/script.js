@@ -8,42 +8,77 @@ ws.onopen = function() {
 
 // Display message received from WS.
 ws.onmessage = function (packet) {
-    $('#message-receive').append(packet.data+ "\n");
-    $('#message-receive').scrollTop($('#message-receive')[0].scrollHeight);
     console.log(packet.data);
-//    parse_packet(packet);
+    jsondata = parse_packet(packet);
+    display_message(jsondata);
 };
 
 // Send text from input to WS.
 function sendMsg() {
-    var message = $('#message-send').val();
-//    var message = create_packet()
-    if (message) {
-        ws.send(message);
-        // Clear messag field
-        $('#message-send').val('');
+    var text = $('#message-send').val();
+    if (text) {
+        message = create_packet(text)
+        if (message) {
+            ws.send(message);
+            $('#message-send').val('');
+        }
     }
     else {
-        $('#status').text('Error parsing message.');
+        $('#status').text('Ingoring empty text.');
     }
 }
 
 // Change mode by sending command string.
 function changeMode(mode) {
-    ws.send(mode);
+    message = JSON.stringify({'TYPE' : 'mode', 'MESSAGE' : mode});
+    ws.send(message);
 }
 
-function create_packet(message) {
-    var msg = {"TYPE": MESSAGE, "MESSAGE": message};
-    return JSON.stringify(msg);
+function display_message(jsondata) {
+    if (jsondata['TYPE'] == 'status') {
+        $('#status').text(jsondata['MESSAGE']);
+        console.log('Received status change.');
+    }
+    if (jsondata['TYPE'] == 'message') {
+        $('#message-receive').append(jsondata['MESSAGE'] + "\n");
+        $('#message-receive').scrollTop($('#message-receive')[0].scrollHeight);
+        console.log('Received message packet.');
+    }
+}
+
+function create_packet(text) {
+    var packet = {"TYPE": 'message', "MESSAGE": text};
+    try {
+        jsondata = JSON.stringify(packet);
+        if (jsondata) {
+            console.log("Created JSON object:");
+            console.log(jsondata);
+            return(jsondata);
+        }
+    }
+    catch(e) {
+        $('#status').text('Error parsing JSON object.');
+        console.log("Error creating JSON object.");
+        console.log(e);
+        return;
+    }
 }
 
 function parse_packet(packet) {
+    console.log("Received packet:");
+    console.log(packet);
     try {
-        json = jQuery.parseJSON(packet.data);
-        console.log(json);
-    } catch (e) {
-        $('#status').text('Error!');
+        jsondata = jQuery.parseJSON(packet.data);
+        if (jsondata) {
+            console.log("Parsed JSON object:");
+            console.log(jsondata);
+            return(jsondata);
+        }
+    }
+    catch (e) {
+        $('#status').text('Error parsing JSON object.');
+        console.log("Error parsing received data.");
+        console.log(e);
         return;
     }
 }

@@ -13,15 +13,15 @@
             <h2>Select mode:</h2>
             <ul id="controls">
                 <li>
-                    <input type="radio" name="mode" class="radio" id="mode-echo" onclick="changeMode('mode-echo')"></input>
-                    <label for="mode-echo">Echo</label>
+                    <input type="radio" name="mode" class="radio" id="mode-echo" onclick="changeMode('0')"></input>
+                    <label for="mode-echo" checked>Echo</label>
                 </li>
                 <li>
-                    <input type="radio" name="mode" class="radio" id="mode-broadcast" onclick="changeMode('mode-broadcast')"></input>
+                    <input type="radio" name="mode" class="radio" id="mode-broadcast" onclick="changeMode('1')"></input>
                     <label for="mode-broadcast">Broadcast</label>
                 </li>
                 <li>
-                    <input type="radio" name="mode" class="radio" id="mode-beacon" onclick="changeMode('mode-beacon')"></input>
+                    <input type="radio" name="mode" class="radio" id="mode-beacon" onclick="changeMode('2')"></input>
                     <label for="mode-beacon">Beacon</label>
                 </li>
             </ul>
@@ -30,7 +30,7 @@
             <h2>Messages:</h2>
             <div>
                 <div><strong>Message Received:</strong></div>
-                <textarea rows="4" cols="50" id="message-receive"></textarea>
+                <textarea readonly rows="4" cols="50" id="message-receive"></textarea>
             </div>
             <div>
                 <div><strong>Message to Send:</strong></div>
