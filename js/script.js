@@ -14,7 +14,7 @@ ws.onmessage = function (packet) {
 };
 
 // Send text from input to WS.
-function sendMsg() {
+function send_message() {
     var text = $('#message-send').val();
     if (text) {
         message = create_packet(text)
@@ -29,7 +29,7 @@ function sendMsg() {
 }
 
 // Change mode by sending command string.
-function changeMode(mode) {
+function change_mode(mode) {
     message = JSON.stringify({'TYPE' : 'mode', 'MESSAGE' : mode});
     ws.send(message);
 }

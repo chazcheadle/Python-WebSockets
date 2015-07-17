@@ -41,7 +41,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
                 # Update status
                 self.write_message(self.create_packet('status', 'Message echoed'))
-            elif:
+            else:
                 # Send a beacon/heartbeat timestamp at a given interval.
                 self.write_message(self.create_packet('message', "### BEACON ###"))
                 # Update status
