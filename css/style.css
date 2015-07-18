@@ -3,6 +3,7 @@ body {
 }
 
 #control-container,
+#action-container,
 #message-container,
 #code-container {
     clear: both;

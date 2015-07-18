@@ -33,7 +33,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         if packet['TYPE'] == 'message':
             if self.mode == 'Broadcast':
                 # Broadcast message to all clients.
-                self.broadcast_message(packet['MESSAGE'])
+                self.broadcast_message('message', packet['MESSAGE'])
                 # Update status
                 self.write_message(self.create_packet('status', 'Message broadcasted'))
             elif self.mode == 'Echo':
@@ -46,6 +46,11 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.write_message(self.create_packet('message', "### BEACON ###"))
                 # Update status
                 self.write_message(self.create_packet('status', 'Sending beacons...'))
+        if packet['TYPE'] == 'action':
+            if packet['MESSAGE'] == '1':
+                self.write_message(self.create_packet('message', "# Trigger Action " + packet['MESSAGE'] + "."))
+                self.write_message(self.create_packet('status', "# Trigger Action received."))
+                self.broadcast_message('action', packet['MESSAGE'])
 
         # Print status to console.
         print(u"Received from client: \"" + message + "\"")
@@ -60,9 +65,13 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         return json.dumps(packet)
 
     # Broadcast message from single client to all registered listeners.
-    def broadcast_message(self, message):
+    def broadcast_message(self, type, message):
         for c in self.clients:
-            c.write_message(self.create_packet('message', ">> " + message))
+            if type == 'message':
+                c.write_message(self.create_packet('message', ">> " + message))
+            if type == 'action':
+                c.write_message(self.create_packet('action', message))
+
 
 class IndexPageHandler(tornado.web.RequestHandler):
     def get(self):

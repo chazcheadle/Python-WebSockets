@@ -44,6 +44,11 @@ function display_message(jsondata) {
         $('#message-receive').scrollTop($('#message-receive')[0].scrollHeight);
         console.log('Received message packet.');
     }
+    if (jsondata['TYPE'] == 'action') {
+        action_receive(jsondata['MESSAGE']);
+        console.log('Received action trigger.');
+    }
+
 }
 
 function create_packet(text) {
@@ -81,4 +86,20 @@ function parse_packet(packet) {
         console.log(e);
         return;
     }
+}
+
+function action_send(action) {
+    message = JSON.stringify({'TYPE' : 'action', 'MESSAGE' : action});
+    ws.send(message);
+    console.log('Send Action ' + action + ' trigger.');
+    $('#status').text('Send Action ' + action + ' trigger.');
+}
+
+function action_receive(action) {
+    $('#status').text('Received Action ' + action + ' signal.');
+    var link = document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = 'http://www.stackoverflow.com/favicon.ico';
+    document.getElementsByTagName('head')[0].appendChild(link);
 }
