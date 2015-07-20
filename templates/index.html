@@ -18,9 +18,9 @@
             </div>
             <div class="container">
                 <div><strong>Message to Send:</strong></div>
-                <input type="text" id="message-send" maxlength="50" size="50">
+                <input type="text" ng-model="message_send.text" id="message-send" maxlength="50" size="50" value="{{! message_send.text }}">
                 <input type="button" ng-click="message_send();" value="Send">
-                <ul id="controls">
+                <ul class="controls mode-controls">
                     <li>
                         <input type="radio" name="mode" class="radio" id="mode-echo" checked checked="checked" ng-click="mode_change('0')"></input>
                         <label for="mode-echo">Echo</label>
@@ -32,17 +32,25 @@
                 </ul>
             </div>
             <div class="container">
-                <strong>Status from Server: </strong><span id="status">{{! status.text }}</span>
+                <strong>Status from Server: </strong><span ng-model="status.text" id="status">{{! status.text }}</span>
             </div>
         </div>
         <div id="action-container">
             <h2 class="container-title">Actions</h2>
-                <div class="container">
-                <ul id="controls">
+            <div class="container">
+                <div><strong>Predefined actions to trigger on the client side:</strong></div>
+                <ul class="controls action-controls">
                     <li>
                         <input type="button" id="action_one" ng-click="action_send('1');" value="Action One">
                     </li>
                 </ul>
+                <p>Predefined client-side JS functions can be triggered.</p>
+            </div>
+            <div class="container">
+                <div><strong>HTML code to broadcast:</strong></div>
+                <textarea rows="4" cols="50" ng-model="action_html.text" id="action-html-send">{{! action_html.text }}</textarea>
+                <input type="button" ng-click="action_html_send();" value="Send HTML">
+                <p>This HTML will be broadcasted to all clients and be rendered in on their page.</p>
             </div>
         </div>
         <div id="code-container">

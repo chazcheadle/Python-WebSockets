@@ -23,20 +23,23 @@ body {
     font-family: arial, sans-serif;
 }
 
-#controls {
+.controls {
     list-style-type: none;
+}
+
+.mode-controls {
     margin: 25px 0 0 0;
     padding: 0;
 }
 
-#controls li {
+.mode-controls li {
     float: left;
     margin: 0 5px 0 0;
     height: 40px;
     position: relative;
 }
 
-#contols label, #controls input {
+.mode-contols label, #mode-controls input {
     position: absolute;
     display: block;
     top: 0;
@@ -45,22 +48,22 @@ body {
     left: 0;
 }
 
-#controls input[type="radio"] {
+.mode-controls input[type="radio"] {
     opacity: 0;
     z-index: 100;
 }
 
-#controls input[type="radio"]:checked + label {
+.mode-controls input[type="radio"]:checked + label {
     background: #0f0;
 }
 
-#controls label {
+.mode-controls label {
     border: 1px solid #ccc;
     padding: 5px;
     cursor: pointer;
     z-index: 90;
 }
 
-#controls label:hover {
+.mode-controls label:hover {
     background: #ff0;
 }

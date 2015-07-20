@@ -4,6 +4,8 @@ app.controller('wsController', function($scope) {
   $scope.message = [];
   $scope.message.text = '';
   $scope.message.input = '';
+  $scope.action_html = [];
+  $scope.action_html.text = '';
   $scope.status = [];
   $scope.status.text = '';
 
@@ -21,18 +23,17 @@ app.controller('wsController', function($scope) {
   // Display message received from WS.
   ws.onmessage = function (packet) {
       console.log(packet.data);
-      jsondata = packet_parse(packet);
-      message_display(jsondata);
+      jsondata = $scope.packet_parse(packet);
+      $scope.message_display(jsondata);
   };
 
   // Send text from input to WS.
   $scope.message_send = function message_send() {
-      var text = $('#message-send').val();
-      if (text) {
-          message = packet_create(text)
+      if ($scope.message_send.text != '') {
+          message = packet_create($scope.message_send.text)
           if (message) {
               ws.send(message);
-              $('#message-send').val('');
+              $scope.message_send.text = '';
           }
       }
       else {
@@ -46,7 +47,7 @@ app.controller('wsController', function($scope) {
       ws.send(message);
   }
 
-  function message_display(jsondata) {
+  $scope.message_display = function message_display(jsondata) {
       if (jsondata['TYPE'] == 'status') {
           $scope.status.text = jsondata['MESSAGE'];
           console.log('Received status change.');
@@ -54,12 +55,14 @@ app.controller('wsController', function($scope) {
       if (jsondata['TYPE'] == 'message') {
           $('#message-receive').append(jsondata['MESSAGE'] + "\n");
           $('#message-receive').scrollTop($('#message-receive')[0].scrollHeight);
+          $scope.status.text = jsondata['MESSAGE'];
           console.log('Received message packet.');
       }
       if (jsondata['TYPE'] == 'action') {
           action_receive(jsondata['MESSAGE']);
           console.log('Received action trigger.');
       }
+      $scope.$apply();
 
   }
 
@@ -81,7 +84,7 @@ app.controller('wsController', function($scope) {
       }
   }
 
-  function packet_parse(packet) {
+  $scope.packet_parse = function packet_parse(packet) {
       console.log("Received packet:");
       console.log(packet);
       try {
@@ -105,6 +108,11 @@ app.controller('wsController', function($scope) {
       ws.send(message);
       console.log('Send Action ' + action + ' trigger.');
       $scope.status.text = 'Send Action ' + action + ' trigger.';
+  }
+
+  $scope.action_html_send = function action_html_send() {
+      console.log('Send HTML.');
+      $scope.action_html.text = '';
   }
 
   function action_receive(action) {
