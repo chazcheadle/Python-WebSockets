@@ -36,7 +36,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.broadcast_message('message', packet['MESSAGE'])
                 # Update status
                 self.write_message(self.create_packet('status', 'Message broadcasted'))
-            elif self.mode == 'Echo':
+            else:
                 # Echo message back to original client.
                 self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
                 # Update status

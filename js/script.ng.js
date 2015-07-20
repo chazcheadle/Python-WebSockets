@@ -1,12 +1,21 @@
 var app = angular.module('wsApp', []);
 
 app.controller('wsController', function($scope) {
+  $scope.message = [];
+  $scope.message.text = '';
+  $scope.message.input = '';
+  $scope.status = [];
+  $scope.status.text = '';
+
   // Create WebSocket instance.
   var ws = new WebSocket("ws://localhost:8080/websocket");
 
   // Display message to confirm a connection has been made.
   ws.onopen = function() {
-      $('#status').innerHTML = 'Connected to websocket.';
+      $('#message-receive').append("Connected to websocket.\n");
+      // Set Initial mode to 'Echo'.
+      $scope.mode_change(0);
+
   };
 
   // Display message received from WS.
@@ -27,7 +36,7 @@ app.controller('wsController', function($scope) {
           }
       }
       else {
-          $('#status').text('Ingoring empty text.');
+          $scope.status.text = 'Ingoring empty text.';
       }
   }
 
@@ -39,7 +48,7 @@ app.controller('wsController', function($scope) {
 
   function message_display(jsondata) {
       if (jsondata['TYPE'] == 'status') {
-          $('#status').text(jsondata['MESSAGE']);
+          $scope.status.text = jsondata['MESSAGE'];
           console.log('Received status change.');
       }
       if (jsondata['TYPE'] == 'message') {
@@ -65,7 +74,7 @@ app.controller('wsController', function($scope) {
           }
       }
       catch(e) {
-          $('#status').text('Error parsing JSON object.');
+          $scope.status.text = 'Error parsing JSON object.';
           console.log("Error creating JSON object.");
           console.log(e);
           return;
@@ -84,7 +93,7 @@ app.controller('wsController', function($scope) {
           }
       }
       catch (e) {
-          $('#status').text('Error parsing JSON object.');
+          $scope.status.text = 'Error parsing JSON object.';
           console.log("Error parsing received data.");
           console.log(e);
           return;
@@ -95,11 +104,11 @@ app.controller('wsController', function($scope) {
       message = JSON.stringify({'TYPE' : 'action', 'MESSAGE' : action});
       ws.send(message);
       console.log('Send Action ' + action + ' trigger.');
-      $('#status').text('Send Action ' + action + ' trigger.');
+      $scope.status.text = 'Send Action ' + action + ' trigger.';
   }
 
   function action_receive(action) {
-      $('#status').text('Received Action ' + action + ' signal.');
+      $scope.status.text = 'Received Action ' + action + ' signal.';
       var link = document.createElement('link');
       link.type = 'image/x-icon';
       link.rel = 'shortcut icon';
