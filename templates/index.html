@@ -53,6 +53,13 @@
                 <p>This HTML will be broadcasted to all clients and be rendered in on their page.</p>
                 <div ng-bind-html="action_html.output">{{! action_html.output }}</div>
             </div>
+            <div class="container">
+                <div><strong>Parameter based packets:</strong></div>
+                <textarea rows="4" cols="50" ng-model="action_json.input_text" id="action-json-send">{{! action_json.input_text }}</textarea>
+                <input type="button" ng-click="action_json_send();" value="Send JSON">
+                <p>This JSON will be broadcasted to clients to be processed and rendered in a template.</p>
+                <div ng-bind-html="action_json.output">{{! action_json.output }}</div>
+            </div>
         </div>
         <div id="code-container">
             <h2 class="container-title">Codez:</h2>

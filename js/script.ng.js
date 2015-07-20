@@ -2,11 +2,13 @@ var app = angular.module('wsApp', []);
 
 app.controller('wsController', ['$scope', '$sce', function($scope, $sce) {
   $scope.message = [];
-//  $scope.message.output = '';
   $scope.message.input_text = '';
   $scope.action_html = [];
   $scope.action_html.output = '';
   $scope.action_html.input_text = '';
+  $scope.action_json = [];
+  $scope.action_json.output = '';
+  $scope.action_json.input_text = '';
   $scope.status = [];
   $scope.status.output = '';
 
@@ -74,6 +76,9 @@ app.controller('wsController', ['$scope', '$sce', function($scope, $sce) {
         }
         if (jsondata['MODE'] == 'html') {
           $scope.action_html_receive(jsondata['MESSAGE']);
+        }
+        if (jsondata['MODE'] == 'json') {
+          $scope.action_json_receive(jsondata['MESSAGE']);
         }
       }
       $scope.$apply();
@@ -144,5 +149,20 @@ app.controller('wsController', ['$scope', '$sce', function($scope, $sce) {
   $scope.action_html_receive = function action_html_receive(html) {
       $scope.status.output = 'Received HTML';
       $scope.action_html.output = $sce.trustAsHtml(html);
+  }
+
+  $scope.action_json_send = function action_json_send() {
+    if ($scope.action_json.input_text != '') {
+      message = JSON.stringify({"TYPE" : "action", "MODE" : "json", "MESSAGE" : JSON.stringify({'TEST' : $scope.action_json.input_text})});
+      ws.send(message);
+      console.log('Send JSON.');
+      $scope.action_json.input_text = '';
+    }
+  }
+
+  $scope.action_json_receive = function action_json_receive(jsondata) {
+      $scope.status.output = 'Received JSON';
+      console.log(jsondata);
+      $scope.action_json.output = $sce.trustAsHtml(jsondata);
   }
 }])
