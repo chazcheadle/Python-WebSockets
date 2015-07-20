@@ -9,12 +9,12 @@ ws.onopen = function() {
 // Display message received from WS.
 ws.onmessage = function (packet) {
     console.log(packet.data);
-    jsondata = parse_packet(packet);
-    display_message(jsondata);
+    jsondata = packet_parse(packet);
+    message_display(jsondata);
 };
 
 // Send text from input to WS.
-function send_message() {
+function message_send() {
     var text = $('#message-send').val();
     if (text) {
         message = create_packet(text)
@@ -29,12 +29,12 @@ function send_message() {
 }
 
 // Change mode by sending command string.
-function change_mode(mode) {
+function mode_change(mode) {
     message = JSON.stringify({'TYPE' : 'mode', 'MESSAGE' : mode});
     ws.send(message);
 }
 
-function display_message(jsondata) {
+function message_display(jsondata) {
     if (jsondata['TYPE'] == 'status') {
         $('#status').text(jsondata['MESSAGE']);
         console.log('Received status change.');
@@ -51,7 +51,7 @@ function display_message(jsondata) {
 
 }
 
-function create_packet(text) {
+function packet_create(text) {
     var packet = {"TYPE": 'message', "MESSAGE": text};
     try {
         jsondata = JSON.stringify(packet);
@@ -69,7 +69,7 @@ function create_packet(text) {
     }
 }
 
-function parse_packet(packet) {
+function packet_parse(packet) {
     console.log("Received packet:");
     console.log(packet);
     try {

@@ -2,14 +2,23 @@ body {
     font-family: arial, sans-serif;
 }
 
-#control-container,
-#action-container,
 #message-container,
+#action-container,
 #code-container {
     clear: both;
     padding: 10px;
 }
 
+.container-title {
+    background: #ddd;
+    border: 1px solid #888;
+    padding: 5px;
+}
+
+.container {
+    margin: 10px;
+    clear: both;
+}
 #message-container textarea {
     font-family: arial, sans-serif;
 }

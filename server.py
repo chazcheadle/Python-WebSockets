@@ -41,13 +41,12 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
                 # Update status
                 self.write_message(self.create_packet('status', 'Message echoed'))
-            else:
-                # Send a beacon/heartbeat timestamp at a given interval.
-                self.write_message(self.create_packet('message', "### BEACON ###"))
-                # Update status
-                self.write_message(self.create_packet('status', 'Sending beacons...'))
         if packet['TYPE'] == 'action':
             if packet['MESSAGE'] == '1':
+                self.write_message(self.create_packet('message', "# Trigger Action " + packet['MESSAGE'] + "."))
+                self.write_message(self.create_packet('status', "# Trigger Action received."))
+                self.broadcast_message('action', packet['MESSAGE'])
+            if packet['MESSAGE'] == '2':
                 self.write_message(self.create_packet('message', "# Trigger Action " + packet['MESSAGE'] + "."))
                 self.write_message(self.create_packet('status', "# Trigger Action received."))
                 self.broadcast_message('action', packet['MESSAGE'])
