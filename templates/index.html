@@ -18,21 +18,21 @@
             </div>
             <div class="container">
                 <div><strong>Message to Send:</strong></div>
-                <input type="text" ng-model="message_send.text" id="message-send" maxlength="50" size="50" value="{{! message_send.text }}">
+                <input type="text" ng-model="message.input_text" id="message-send" maxlength="50" size="50" value="{{! message_send.text }}">
                 <input type="button" ng-click="message_send();" value="Send">
                 <ul class="controls mode-controls">
                     <li>
-                        <input type="radio" name="mode" class="radio" id="mode-echo" checked checked="checked" ng-click="mode_change('0')"></input>
+                        <input type="radio" name="mode" class="radio" id="mode-echo" checked checked="checked" ng-click="mode_change('echo')"></input>
                         <label for="mode-echo">Echo</label>
                     </li>
                     <li>
-                        <input type="radio" name="mode" class="radio" id="mode-broadcast" ng-click="mode_change('1')"></input>
+                        <input type="radio" name="mode" class="radio" id="mode-broadcast" ng-click="mode_change('broadcast')"></input>
                         <label for="mode-broadcast">Broadcast</label>
                     </li>
                 </ul>
             </div>
             <div class="container">
-                <strong>Status from Server: </strong><span ng-model="status.text" id="status">{{! status.text }}</span>
+                <strong>Status from Server: </strong><span ng-model="status.output" id="status">{{! status.output }}</span>
             </div>
         </div>
         <div id="action-container">
@@ -41,16 +41,17 @@
                 <div><strong>Predefined actions to trigger on the client side:</strong></div>
                 <ul class="controls action-controls">
                     <li>
-                        <input type="button" id="action_one" ng-click="action_send('1');" value="Action One">
+                        <input type="button" id="action_one" ng-click="action_trigger_send('trigger');" value="Trigger action">
                     </li>
                 </ul>
                 <p>Predefined client-side JS functions can be triggered.</p>
             </div>
             <div class="container">
                 <div><strong>HTML code to broadcast:</strong></div>
-                <textarea rows="4" cols="50" ng-model="action_html.text" id="action-html-send">{{! action_html.text }}</textarea>
+                <textarea rows="4" cols="50" ng-model="action_html.input_text" id="action-html-send">{{! action_html.input_text }}</textarea>
                 <input type="button" ng-click="action_html_send();" value="Send HTML">
                 <p>This HTML will be broadcasted to all clients and be rendered in on their page.</p>
+                <div ng-bind-html="action_html.output">{{! action_html.output }}</div>
             </div>
         </div>
         <div id="code-container">

@@ -8,15 +8,13 @@ from tornado.options import define, options, parse_command_line
 
 define("port", default=8080, help="run on the given port", type=int)
 
-modes = ['Echo', 'Broadcast', 'Beacon']
-
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []
     mode = ''
 
     def open(self):
         print("WebSocket opened")
-        self.write_message(self.create_packet('status', "WebSocket opened"))
+        self.write_message(self.create_packet("message", "status", "WebSocket opened"))
         # Register listening clients.
         self.clients.append(self)
 
@@ -25,31 +23,25 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             packet = json.loads(message)
         except:
             return self.write_message(self.create_packet('status', "Error parsing incoming packet."))
-        if packet['TYPE'] == 'mode':
-            self.mode = modes[int(packet['MESSAGE'])]
-            self.write_message(self.create_packet('message', "* " + modes[int(packet['MESSAGE'])] + " mode activated."))
-            self.write_message(self.create_packet('status', 'Activate ' + modes[int(packet['MESSAGE'])] + ' mode' ))
-            print(u"Change to %s mode" % modes[int(packet['MESSAGE'])])
         if packet['TYPE'] == 'message':
-            if self.mode == 'Broadcast':
+            if packet['MODE'] == 'broadcast':
                 # Broadcast message to all clients.
-                self.broadcast_message('message', packet['MESSAGE'])
+                self.broadcast_message('message', 'broadcast', packet['MESSAGE'])
                 # Update status
-                self.write_message(self.create_packet('status', 'Message broadcasted'))
+                self.write_message(self.create_packet('message', 'status', 'Message broadcasted'))
             else:
                 # Echo message back to original client.
-                self.write_message(self.create_packet('message', "> " + packet['MESSAGE']))
+                self.write_message(self.create_packet('message', 'echo', packet['MESSAGE']))
                 # Update status
-                self.write_message(self.create_packet('status', 'Message echoed'))
+                self.write_message(self.create_packet('message', 'status', 'Message echoed'))
         if packet['TYPE'] == 'action':
-            if packet['MESSAGE'] == '1':
-                self.write_message(self.create_packet('message', "# Trigger Action " + packet['MESSAGE'] + "."))
-                self.write_message(self.create_packet('status', "# Trigger Action received."))
-                self.broadcast_message('action', packet['MESSAGE'])
-            if packet['MESSAGE'] == '2':
-                self.write_message(self.create_packet('message', "# Trigger Action " + packet['MESSAGE'] + "."))
-                self.write_message(self.create_packet('status', "# Trigger Action received."))
-                self.broadcast_message('action', packet['MESSAGE'])
+            if packet['MODE'] == 'trigger':
+                # Update status
+                self.write_message(self.create_packet('message', 'status', "# Trigger Action received."))
+                self.broadcast_message('action', packet['MODE'], packet['MESSAGE'])
+            else:
+                self.write_message(self.create_packet('message', 'status', "# Received HTML."))
+                self.broadcast_message('action', packet['MODE'], packet['MESSAGE'])
 
         # Print status to console.
         print(u"Received from client: \"" + message + "\"")
@@ -59,18 +51,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         self.clients.remove(self)
 
     # Create JSON object
-    def create_packet(self, type, message):
-        packet = {'TYPE' : type, 'MESSAGE' : message}
+    def create_packet(self, type, mode, message):
+        packet = {'TYPE' : type, 'MODE' :  mode, 'MESSAGE' : message}
         return json.dumps(packet)
 
     # Broadcast message from single client to all registered listeners.
-    def broadcast_message(self, type, message):
+    def broadcast_message(self, type, mode, message):
         for c in self.clients:
-            if type == 'message':
-                c.write_message(self.create_packet('message', ">> " + message))
-            if type == 'action':
-                c.write_message(self.create_packet('action', message))
-
+            c.write_message(self.create_packet(type, mode, message))
 
 class IndexPageHandler(tornado.web.RequestHandler):
     def get(self):
