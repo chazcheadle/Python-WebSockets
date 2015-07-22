@@ -12,6 +12,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     clients = []
     mode = ''
 
+    def check_origin(self, origin):
+        return True
+
     def open(self):
         print("WebSocket opened")
         self.write_message(self.create_packet("message", "status", "WebSocket opened"))

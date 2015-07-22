@@ -165,4 +165,4 @@ app.controller('wsController', ['$scope', '$sce', function($scope, $sce) {
       console.log(jsondata);
       $scope.action_json.output = $sce.trustAsHtml(jsondata);
   }
-}])
+}]);
