@@ -4,8 +4,11 @@ import tornado.web
 import tornado.websocket
 import tornado.httpserver
 import tornado.ioloop
+import logging
 from tornado.options import define, options, parse_command_line
 
+
+logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s')
 define("port", default=8080, help="run on the given port", type=int)
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
@@ -16,7 +19,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        print("WebSocket opened")
+        logging.info("WebSocket opened")
         self.write_message(self.create_packet("message", "status", "WebSocket opened"))
         # Register listening clients.
         self.clients.append(self)
@@ -47,10 +50,10 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 self.broadcast_message('action', packet['MODE'], packet['MESSAGE'])
 
         # Print status to console.
-        print(u"Received from client: \"" + message + "\"")
+        logging.info(u"Received from client: \"" + message + "\"")
 
     def on_close(self):
-        print("WebSocket closed")
+        logging.info("WebSocket closed")
         self.clients.remove(self)
 
     # Create JSON object
