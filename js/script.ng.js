@@ -48,27 +48,22 @@ app.controller('wsController', ['$scope', '$sce', function($scope, $sce) {
   $scope.mode_change = function mode_change(mode) {
       $scope.mode = mode;
       $scope.status.output = "Entering " + mode + " mode.";
-
-//      message = JSON.stringify({"TYPE" : "message" "MODE" : 0, "MESSAGE" : mode});
-//      ws.send(message);
-  }
+ }
 
   $scope.message_display = function message_display(jsondata) {
       if (jsondata['TYPE'] == 'message') {
         if (jsondata['MODE'] == 'echo') {
           $('#message-receive').append("> " + jsondata['MESSAGE'] + "\n");
           $('#message-receive').scrollTop($('#message-receive')[0].scrollHeight);
-          console.log('Received message packet.');
         }
         if (jsondata['MODE'] == 'broadcast') {
           $('#message-receive').append(">> " + jsondata['MESSAGE'] + "\n");
           $('#message-receive').scrollTop($('#message-receive')[0].scrollHeight);
-          console.log('Received broadcast message packet.');
         }
         if (jsondata['MODE'] == 'status') {
           $scope.status.output = jsondata['MESSAGE'];
-          console.log('Received status message.');
         }
+        console.log('Received ' + jsondata['MODE'] + ' message.');
       }
       if (jsondata['TYPE'] == 'action') {
         if (jsondata['MODE'] == 'trigger') {
