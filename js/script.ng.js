@@ -148,7 +148,7 @@ app.controller('wsController', ['$scope', '$sce', function($scope, $sce) {
 
   $scope.action_json_send = function action_json_send() {
     if ($scope.action_json.input_text != '') {
-      message = JSON.stringify({"TYPE" : "action", "MODE" : "json", "MESSAGE" : JSON.stringify({'TEST' : $scope.action_json.input_text})});
+      message = JSON.stringify({"TYPE" : "action", "MODE" : "json", "MESSAGE" : JSON.stringify($scope.action_json.input_text)});
       ws.send(message);
       console.log('Send JSON.');
       $scope.action_json.input_text = '';

@@ -45,9 +45,13 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 # Update status
                 self.write_message(self.create_packet('message', 'status', "# Trigger Action received."))
                 self.broadcast_message('action', packet['MODE'], packet['MESSAGE'])
-            else:
+            elif packet['MODE'] == 'html':
                 self.write_message(self.create_packet('message', 'status', "# Received HTML."))
                 self.broadcast_message('action', packet['MODE'], packet['MESSAGE'])
+            elif packet['MODE'] == 'json':
+                self.write_message(self.create_packet('message', 'status', "# Received HTML."))
+                self.broadcast_message('action', packet['MODE'], json.loads(packet['MESSAGE']))
+                logging.info(json.loads(packet['MESSAGE']))
 
         # Print status to console.
         logging.info(u"Received from client: \"" + message + "\"")
